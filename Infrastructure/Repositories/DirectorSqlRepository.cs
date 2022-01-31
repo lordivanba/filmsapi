@@ -32,7 +32,6 @@ namespace filmsapi.infrastructure.repositories
             return await query;
         }
 
-
         public async Task<int> CreateDirector(Director director)
         {
             if (director == null)

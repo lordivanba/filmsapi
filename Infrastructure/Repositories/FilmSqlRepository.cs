@@ -22,13 +22,19 @@ namespace filmsapi.infrastructure.repositories
         public async Task<IEnumerable<Film>> GetFilms()
         {
 
-            var query = _context.Films.Select(x => x);
+            var query = _context.Films.Include(x => x.Director);
             return await query.ToListAsync();
         }
 
         public async Task<Film> GetFilmById(int id)
         {
-            var query = _context.Films.FindAsync(id);
+            var query = _context.Films.Include(x => x.Director).FirstOrDefaultAsync(x => x.Id == id);
+            return await query;
+        }
+
+        public async Task<IEnumerable<Film>> GetDirectorFilms(int id){
+            var query = _context.Films.Include(x => x.Director).Where(x => x.DirectorId == id).ToListAsync();
+
             return await query;
         }
 

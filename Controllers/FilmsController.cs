@@ -1,5 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
+using filmsapi.domain.dtos.requests;
+using filmsapi.domain.dtos.responses;
 using filmsapi.domain.entities;
 using filmsapi.domain.interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -11,10 +16,14 @@ namespace filmsapi.Controllers
     public class FilmsController : ControllerBase
     {
         private readonly IFilmSqlRepository _repository;
+        private readonly IDirectorSqlRepository _repository2;
+        private readonly IMapper _mapper;
 
-        public FilmsController(IFilmSqlRepository repository)
+        public FilmsController(IFilmSqlRepository repository, IMapper mapper, IDirectorSqlRepository repository2)
         {
             _repository = repository;
+            _mapper = mapper;
+            _repository2 = repository2;
         }
 
         [HttpGet]
@@ -22,8 +31,9 @@ namespace filmsapi.Controllers
         {
 
             var films = await _repository.GetFilms();
-
-            return Ok(films);
+            var response = _mapper.Map<IEnumerable<Film>,IEnumerable<FilmResponse>>(films);
+        
+            return Ok(response);
         }
 
         [HttpGet]
@@ -34,18 +44,41 @@ namespace filmsapi.Controllers
             var film = await _repository.GetFilmById(id);
             if (film == null)
                 return NotFound("No se ha encontrado un film que corresponda con el ID proporcionado");
-
-            return Ok(film);
+            var response = _mapper.Map<Film, FilmResponse>(film);
+            return Ok(response);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateFilm([FromBody] Film film)
-        {
+        [HttpGet]
+        [Route("director/{id::int}")]
+        public async Task<IActionResult> GetDirectorFilms([FromRoute] int id ){
+            var directorFilms = await _repository.GetDirectorFilms(id);
+            if(!directorFilms.Any())
+                return NotFound("No se ha encontrado un director que corresponda con el ID proporcionado o el director no tiene films registrados");
+            var response = _mapper.Map<IEnumerable<Film>,IEnumerable<FilmResponse>>(directorFilms);
 
+            // var director = await _repository2.GetDirectorById(id);
+
+            // var respuesta = new DirectorFilmsResponse();
+            // respuesta.Director = $"{director.Nombre} {director.Apellido}";
+            // respuesta.Films = response;
+            
+            // var director = await _repository2.GetDirectorById(id);
+
+            // var respuesta = new DirectorFilmsResponse();
+            // respuesta.Director = $"{director.Nombre} {director.Apellido}";
+            // respuesta.Films = response;
+            return Ok(response);
+        }        
+
+        [HttpPost]
+        public async Task<IActionResult> CreateFilm([FromBody] FilmCreateRequest film)
+        {
+        
             int id;
             try
             {
-                id = await _repository.CreateFilm(film);
+                var obj = _mapper.Map<FilmCreateRequest, Film>(film);
+                id = await _repository.CreateFilm(obj);
             }
             catch (Exception e)
             {
@@ -59,7 +92,7 @@ namespace filmsapi.Controllers
 
         [HttpPut]
         [Route("{id::int}")]
-        public async Task<IActionResult> UpdateFilm([FromRoute] int id, [FromBody] Film film)
+        public async Task<IActionResult> UpdateFilm([FromRoute] int id, [FromBody] FilmUpdateRequest film)
         {
 
             if (id <= 0)
@@ -70,7 +103,8 @@ namespace filmsapi.Controllers
 
             try
             {
-                var result = await _repository.UpdateFilm(id, film);
+                var obj = _mapper.Map<FilmUpdateRequest, Film>(film);
+                var result = await _repository.UpdateFilm(id, obj);
 
                 if (!result)
                     return Conflict("No fue posible realizar la actualización, verifica tu información");
