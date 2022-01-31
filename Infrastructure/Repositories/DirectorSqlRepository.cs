@@ -32,6 +32,30 @@ namespace filmsapi.infrastructure.repositories
             return await query;
         }
 
+        public async Task<Director> GetDirectorFilms(int id)
+        {
+
+            var query = _context.Directors.Include(x => x.Films).Where(x => x.Id == id).Select(d => new Director
+            {
+                Id = d.Id,
+                Nombre = d.Nombre,
+                Apellido = d.Apellido,
+                Nacionalidad = d.Nacionalidad,
+                Films = d.Films.Select(f => new Film
+                {
+                    Id = f.Id,
+                    Titulo = f.Titulo,
+                    DirectorId = f.DirectorId,
+                    Genero = f.Genero,
+                    Puntuacion = f.Puntuacion,
+                    Rating = f.Rating,
+                    YearPublicacion = f.YearPublicacion,
+                }).ToList()
+            }).FirstOrDefaultAsync();
+
+            return await query;
+        }
+
         public async Task<int> CreateDirector(Director director)
         {
             if (director == null)

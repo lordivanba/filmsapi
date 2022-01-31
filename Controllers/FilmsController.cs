@@ -48,27 +48,27 @@ namespace filmsapi.Controllers
             return Ok(response);
         }
 
-        [HttpGet]
-        [Route("director/{id::int}")]
-        public async Task<IActionResult> GetDirectorFilms([FromRoute] int id ){
-            var directorFilms = await _repository.GetDirectorFilms(id);
-            if(!directorFilms.Any())
-                return NotFound("No se ha encontrado un director que corresponda con el ID proporcionado o el director no tiene films registrados");
-            var response = _mapper.Map<IEnumerable<Film>,IEnumerable<FilmResponse>>(directorFilms);
+        // [HttpGet]
+        // [Route("director/{id::int}")]
+        // public async Task<IActionResult> GetDirectorFilms([FromRoute] int id ){
+        //     var directorFilms = await _repository.GetDirectorFilms(id);
+        //     if(!directorFilms.Any())
+        //         return NotFound("No se ha encontrado un director que corresponda con el ID proporcionado o el director no tiene films registrados");
+        //     var response = _mapper.Map<IEnumerable<Film>,IEnumerable<FilmResponse>>(directorFilms);
 
-            // var director = await _repository2.GetDirectorById(id);
+        //     // var director = await _repository2.GetDirectorById(id);
 
-            // var respuesta = new DirectorFilmsResponse();
-            // respuesta.Director = $"{director.Nombre} {director.Apellido}";
-            // respuesta.Films = response;
+        //     // var respuesta = new DirectorFilmsResponse();
+        //     // respuesta.Director = $"{director.Nombre} {director.Apellido}";
+        //     // respuesta.Films = response;
             
-            // var director = await _repository2.GetDirectorById(id);
+        //     // var director = await _repository2.GetDirectorById(id);
 
-            // var respuesta = new DirectorFilmsResponse();
-            // respuesta.Director = $"{director.Nombre} {director.Apellido}";
-            // respuesta.Films = response;
-            return Ok(response);
-        }        
+        //     // var respuesta = new DirectorFilmsResponse();
+        //     // respuesta.Director = $"{director.Nombre} {director.Apellido}";
+        //     // respuesta.Films = response;
+        //     return Ok(response);
+        // }
 
         [HttpPost]
         public async Task<IActionResult> CreateFilm([FromBody] FilmCreateRequest film)

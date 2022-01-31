@@ -47,6 +47,20 @@ namespace filmsapi.Controllers
             return Ok(response);
         }
 
+        [HttpGet]
+        [Route("{id::int}/films")]
+        public async Task<IActionResult> GetDirectorFilms([FromRoute] int id)
+        {
+            var director = await _repository.GetDirectorFilms(id);
+            if (director == null)
+                return NotFound("No se ha encontrado un director que corresponda con el ID proporcionado");
+
+            // var films = _mapper.Map<IEnumerable<Film>, IEnumerable<FilmAltResponse>>(director.Films);
+            var response = _mapper.Map<Director, DirectorFilmsResponse>(director);
+
+            return Ok(response);
+        }
+
         [HttpPost]
         public async Task<IActionResult> CreateDirector([FromBody] DirectorCreateRequest director)
         {

@@ -10,7 +10,8 @@ namespace filmsapi.application.mappings
         public AutoMapperProfile()
         {
             //Films
-            CreateMap<Film, FilmResponse>().ForMember(dest => dest.Director, opt => opt.MapFrom(src => $"{src.Director.Nombre} {src.Director.Apellido}"));
+            CreateMap<Film, FilmResponse>()
+                .ForMember(dest => dest.Director, opt => opt.MapFrom(src => $"{src.Director.Nombre} {src.Director.Apellido}"));
             CreateMap<FilmCreateRequest, Film>();
             CreateMap<FilmUpdateRequest, Film>();
 
@@ -20,12 +21,12 @@ namespace filmsapi.application.mappings
             CreateMap<DirectorUpdateRequest, Director>();
 
             //DirectorFilms
-            // CreateMap<Film, DirectorFilmsResponse>().ForMember(dest => dest.Director, opt => opt.MapFrom(src => $"{src.Director.Nombre} {src.Director.Apellido}")).ForMember(dest => dest.Films, opt => opt.MapFrom(src => src));
-
-            CreateMap<Film, DirectorFilmsResponse>().ForMember(dest => dest.Director, opt => opt.MapFrom(src => $"{src.Director.Nombre} {src.Director.Apellido}")).ForMember(dest => dest.Films, opt => opt.MapFrom(src => src));
-
-            CreateMap<Director, DirectorFilmsResponse>().ForMember(dest => dest.Director, opt => opt.MapFrom(src => $"{src.Nombre} {src.Apellido}")).ForMember(dest => dest.Films, opt => opt.MapFrom(src => src.Films));
-
+            CreateMap<Director, DirectorFilmsResponse>()
+                .ForMember(dest => dest.Director, opt => opt.MapFrom(src => $"{src.Nombre} {src.Apellido}"))
+                .ForPath(dest => dest.Films, opt => opt.MapFrom(src => src.Films));
+        
+            CreateMap<Film, FilmAltResponse>()
+                .ForMember(dest => dest.Film, opt => opt.MapFrom(src => $"{src.Titulo} ({src.YearPublicacion})"));
         }
     }
 }

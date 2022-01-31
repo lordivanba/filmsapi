@@ -32,11 +32,11 @@ namespace filmsapi.infrastructure.repositories
             return await query;
         }
 
-        public async Task<IEnumerable<Film>> GetDirectorFilms(int id){
-            var query = _context.Films.Include(x => x.Director).Where(x => x.DirectorId == id).ToListAsync();
+        // public async Task<IEnumerable<Film>> GetDirectorFilms(int id){
+        //     var query = _context.Films.Include(x => x.Director).Where(x => x.DirectorId == id).ToListAsync();
 
-            return await query;
-        }
+        //     return await query;
+        // }
 
         public async Task<int> CreateFilm(Film film)
         {
